@@ -36,11 +36,35 @@ segment .bss
 
 segment .text
 
+; void multi_thread_exit(void) (depreciated)
+; Originally called multi_thread, but it has since been renamed & depreciated because it's not as useful as the new multi_thread
+; Opens & Closes multiple threads. This process is the main driver thread, which terminates entire program when finished.
+; Depends on the the global variable num_threads
+; num_threads:		the number of threads a user needs (default=1)
+multi_thread_exit:
+	push	ebx						; push address of threadfn to the stack
+	mov		esi, [num_threads]
+	mov		DWORD [counter], esi
+	init_thread_loop_exit:
+		call 	new_thread			; for every call to thread_create a new thread is made
+		dec		DWORD [counter]
+		cmp		DWORD [counter], 0
+		jne		init_thread_loop_exit
+
+	
+	; exit
+	mov		ebx, 0
+	mov 	eax, SYS_exit
+	int 	0x80
+	
 ; void multi_thread(void)
-; Opens & Closes multiple threads. This process is the main driver thread
+; Opens & Closes multiple threads. This process is the main driver thread, which returns to a caller process when finished.
 ; Depends on the the global variable num_threads
 ; num_threads:		the number of threads a user needs (default=1)
 multi_thread:
+	push	ebp
+	mov		ebp, esp
+
 	push	ebx						; push address of threadfn to the stack
 	mov		esi, [num_threads]
 	mov		DWORD [counter], esi
@@ -52,9 +76,9 @@ multi_thread:
 
 	
 	; exit
-	mov		ebx, 0
-	mov 	eax, SYS_exit
-	int 	0x80
+    mov		esp, ebp
+    pop		ebp
+    ret
 
 ; long new_thread(void (*)(void))
 ; Helper Function for void multi_thread(void)

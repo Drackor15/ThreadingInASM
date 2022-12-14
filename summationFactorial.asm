@@ -21,6 +21,12 @@ main:
 	call	factorial
 	mov		ebx, eax	 ; return value
 	
+	;mov		edx, len
+	;mov 	ecx, str
+	;mov 	ebx, STDOUT
+	;mov 	eax, SYS_write
+	;int 	0x80
+	
 	mov		eax, 0
 	mov		esp, ebp
 	pop		ebp
@@ -31,7 +37,9 @@ factorial:
     push 	ebp
     mov		ebp, esp
 
-    mov		eax, DWORD [ebp]
+	add		esp, 8
+    mov		eax, DWORD [esp]
+	sub		esp, 8
     cmp		eax, 1
     je 		exit_factorial
 
@@ -39,7 +47,9 @@ factorial:
     push	eax
     call	factorial
 
-    mov		ebx, DWORD [ebp]
+	add		esp, 12
+    mov		ebx, DWORD [esp]
+	sub		esp, 12
     imul	eax, ebx
 
 exit_factorial:

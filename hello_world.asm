@@ -19,10 +19,20 @@ main:
 	push	ebp
 	mov		ebp, esp
 	
-	; To call multple threads change num_threads
 	mov		DWORD [num_threads], 6
-	mov 	ebx, hello_world				; puts address of func in stack, so that thread is passed a pointer to a func; Similar to pthread
-	call	multi_thread
+	mov		ebx, hello_world
+	call	multi_thread		; new multi_thread func
+	
+	;mov		edx, hello_world_str_len ; used to test if program continues executing after using multi_thread_ret
+	;mov 	ecx, hello_world_str
+	;mov 	ebx, STDOUT
+	;mov 	eax, SYS_write
+	;int 	0x80
+	
+	; To call multple threads change num_threads
+	;mov		DWORD [num_threads], 6
+	;mov 	ebx, hello_world				; puts address of func in stack, so that thread is passed a pointer to a func; Similar to pthread
+	;call	multi_thread_exit		; old multi_thread func
 	
 	mov		eax, 0
 	mov		esp, ebp
